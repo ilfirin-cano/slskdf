@@ -35,7 +35,6 @@ using Microsoft.Extensions.Options;
 namespace slskd.Search.API
 {
     using System;
-    using System.Threading;
     using System.Threading.Tasks;
     using Asp.Versioning;
     using Microsoft.AspNetCore.Authorization;
@@ -90,9 +89,7 @@ namespace slskd.Search.API
                 return BadRequest(ModelState.GetReadableString());
             }
 
-            try
-            {
-                var id = request.Id ?? Guid.NewGuid();
+            var id = request.Id ?? Guid.NewGuid();
 
                 Search search;
 
@@ -116,8 +113,6 @@ namespace slskd.Search.API
                     Log.Error(ex, "Failed to execute search {Search}: {Message}", request, ex.Message);
                     return StatusCode(500, ex.Message);
                 }
-            }
-            }
         }
 
         /// <summary>
