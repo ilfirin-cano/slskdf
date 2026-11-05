@@ -64,7 +64,6 @@ namespace slskd.Search.API
             OptionsSnapshot = optionsSnapshot;
         }
 
-        private static SemaphoreSlim SearchRequestLimiter { get; } = new SemaphoreSlim(1, 1);
         private ISearchService Searches { get; }
         private IOptionsSnapshot<Options> OptionsSnapshot { get; }
         private ILogger Log { get; set; } = Serilog.Log.ForContext<SearchesController>();
@@ -89,11 +88,6 @@ namespace slskd.Search.API
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState.GetReadableString());
-            }
-
-            if (!SearchRequestLimiter.Wait(0))
-            {
-                return StatusCode(429, "Only one concurrent operation is permitted. Wait until the previous request completes");
             }
 
             try
@@ -123,9 +117,6 @@ namespace slskd.Search.API
                     return StatusCode(500, ex.Message);
                 }
             }
-            finally
-            {
-                SearchRequestLimiter.Release();
             }
         }
 
