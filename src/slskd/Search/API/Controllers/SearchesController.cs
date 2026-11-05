@@ -91,28 +91,28 @@ namespace slskd.Search.API
 
             var id = request.Id ?? Guid.NewGuid();
 
-                Search search;
+            Search search;
 
-                try
-                {
-                    search = await Searches.StartAsync(id, SearchQuery.FromText(request.SearchText), SearchScope.Network, request.ToSearchOptions());
-                    return Ok(search);
-                }
-                catch (Exception ex) when (ex is ArgumentException || ex is Soulseek.DuplicateTokenException)
-                {
-                    Log.Error(ex, "Failed to execute search {Search}: {Message}", request, ex.Message);
-                    return BadRequest(ex.Message);
-                }
-                catch (InvalidOperationException ex)
-                {
-                    Log.Error(ex, "Failed to execute search {Search}: {Message}", request, ex.Message);
-                    return Conflict(ex.Message);
-                }
-                catch (Exception ex)
-                {
-                    Log.Error(ex, "Failed to execute search {Search}: {Message}", request, ex.Message);
-                    return StatusCode(500, ex.Message);
-                }
+            try
+            {
+                search = await Searches.StartAsync(id, SearchQuery.FromText(request.SearchText), SearchScope.Network, request.ToSearchOptions());
+                return Ok(search);
+            }
+            catch (Exception ex) when (ex is ArgumentException || ex is Soulseek.DuplicateTokenException)
+            {
+                Log.Error(ex, "Failed to execute search {Search}: {Message}", request, ex.Message);
+                return BadRequest(ex.Message);
+            }
+            catch (InvalidOperationException ex)
+            {
+                Log.Error(ex, "Failed to execute search {Search}: {Message}", request, ex.Message);
+                return Conflict(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, "Failed to execute search {Search}: {Message}", request, ex.Message);
+                return StatusCode(500, ex.Message);
+            }
         }
 
         /// <summary>
