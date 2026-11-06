@@ -64,7 +64,10 @@ namespace slskd.Search.API
             OptionsSnapshot = optionsSnapshot;
         }
 
+        // Keep the network search start path serialized while accepting a bounded number of waiting API requests.
+        private const int MaximumQueuedSearchRequests = 500;
         private static SemaphoreSlim SearchRequestLimiter { get; } = new SemaphoreSlim(1, 1);
+        private static SemaphoreSlim SearchRequestQueueLimiter { get; } = new SemaphoreSlim(MaximumQueuedSearchRequests + 1, MaximumQueuedSearchRequests + 1);
         private ISearchService Searches { get; }
         private IOptionsSnapshot<Options> OptionsSnapshot { get; }
         private ILogger Log { get; set; } = Serilog.Log.ForContext<SearchesController>();
@@ -91,9 +94,21 @@ namespace slskd.Search.API
                 return BadRequest(ModelState.GetReadableString());
             }
 
-            if (!SearchRequestLimiter.Wait(0))
+            // Reserve a bounded queue slot before waiting so a burst of external requests cannot grow
+            // unbounded in memory. One slot is for the active request; the remainder are waiting requests.
+            if (!SearchRequestQueueLimiter.Wait(0))
             {
-                return StatusCode(429, "Only one concurrent operation is permitted. Wait until the previous request completes");
+                return StatusCode(429, "The search request queue is full. Retry after some searches have started.");
+            }
+
+            try
+            {
+                await SearchRequestLimiter.WaitAsync(HttpContext.RequestAborted);
+            }
+            catch
+            {
+                SearchRequestQueueLimiter.Release();
+                throw;
             }
 
             try
@@ -126,6 +141,7 @@ namespace slskd.Search.API
             finally
             {
                 SearchRequestLimiter.Release();
+                SearchRequestQueueLimiter.Release();
             }
         }
 
