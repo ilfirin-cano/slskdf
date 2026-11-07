@@ -218,6 +218,7 @@
 #   listen_ip_address: 0.0.0.0
 #   listen_port: 50300
 #   diagnostic_level: Info
+#   maximum_concurrent_searches: 5 # restart required; higher values increase load
 #   distributed_network:
 #     disabled: false
 #     disable_children: false
