@@ -728,7 +728,7 @@ namespace slskd
                         maximumConcurrentUploads: OptionsAtStartup.Transfers.Upload.Slots,
                         maximumConcurrentDownloads: OptionsAtStartup.Transfers.Download.Slots,
                         minimumDiagnosticLevel: OptionsAtStartup.Soulseek.DiagnosticLevel.ToEnum<Soulseek.Diagnostics.DiagnosticLevel>(),
-                        maximumConcurrentSearches: 5,
+                        maximumConcurrentSearches: OptionsAtStartup.Soulseek.MaximumConcurrentSearches,
                         raiseEventsAsynchronously: true)));
 
             // add the core application service to DI as well as a hosted service so that other services can
