@@ -685,6 +685,21 @@ soulseek:
   password: <password>
 ```
 
+## Concurrent Searches
+
+The maximum number of searches that can run at the same time. The default is 2, matching the conservative limit used by slskd. Increasing it can add load and resource contention; values up to 100 are accepted. Restart slskd after changing this setting.
+
+| Command-Line | Environment Variable | Description |
+| --- | --- | --- |
+| `--slsk-maximum-concurrent-searches` | `SLSKD_SLSK_MAXIMUM_CONCURRENT_SEARCHES` | Maximum number of searches running at once (1–100) |
+
+#### YAML
+
+```yaml
+soulseek:
+  maximum_concurrent_searches: 5
+```
+
 ## Distributed Network
 
 Options for the Soulseek distributed network, which is how search requests are delivered.
