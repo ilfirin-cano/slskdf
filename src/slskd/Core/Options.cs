@@ -1698,6 +1698,16 @@ namespace slskd
         public class SoulseekOptions
         {
             /// <summary>
+            ///     Gets the maximum number of concurrent searches.
+            /// </summary>
+            [Argument(default, "slsk-maximum-concurrent-searches")]
+            [EnvironmentVariable("SLSK_MAXIMUM_CONCURRENT_SEARCHES")]
+            [Description("maximum number of concurrent searches")]
+            [Range(1, 100)]
+            [RequiresRestart]
+            public int MaximumConcurrentSearches { get; init; } = 2;
+
+            /// <summary>
             ///     Gets the address of the Soulseek server.
             /// </summary>
             [Argument(default, "slsk-address")]
